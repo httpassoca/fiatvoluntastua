@@ -1,13 +1,11 @@
 import { Bot } from "grammy";
 import { Configuration, OpenAIApi } from "openai";
-import fetch from 'node-fetch';
 
 //Create a new bot
-const bot = new Bot(`${process.env['telegramBotKey']}`);
-
+const bot = new Bot(`${process.env.TELEGRAM_BOT_TOKEN}`);
 
 const configuration = new Configuration({
-  apiKey: process.env['openAIKey'],
+  apiKey: process.env.OPEN_AI_TOKEN,
 });
 const openai = new OpenAIApi(configuration);
 
