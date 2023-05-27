@@ -1,31 +1,21 @@
 import { Bot } from "grammy";
-import { Configuration, OpenAIApi } from "openai";
+import * as dotenv from 'dotenv';
+import { gptAnswer } from "./providers/openai";
 
-//Create a new bot
+dotenv.config();
+
 const bot = new Bot(`${process.env.TELEGRAM_BOT_TOKEN}`);
 
-const configuration = new Configuration({
-  apiKey: process.env.OPEN_AI_TOKEN,
-});
-const openai = new OpenAIApi(configuration);
-
-//This function would be added to the dispatcher as a handler for messages coming from the Bot API
+let alvaroViado = true;
 bot.on("message", async (ctx) => {
-  //Print to console
-
-  if (ctx.from.username === 'alvixxo') {
-    await ctx.reply('de cima é viado');
+  if (ctx.from.username === 'alvixxo' && alvaroViado) {
+    alvaroViado = false;
+    await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
   }
   if (ctx.message.text && !ctx.message.text.includes('kkkk') && !ctx.message.text.includes('KKKK')) {
-    console.log(ctx.message.text)
-    const gpt = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: ctx.message.text }],
-    });
-    console.log(gpt.data.choices[0]);
-    await ctx.reply(gpt.data.choices[0].message?.content || ``, { reply_to_message_id: ctx.message.message_id });
+    const answer = await gptAnswer(ctx.message.text);
+    await ctx.reply(answer, { reply_to_message_id: ctx.message.message_id });
   }
-
 });
 
 //Start the Bot
