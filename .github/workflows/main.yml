@@ -48,4 +48,4 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh staging 'cd ~/dev/fiatvoluntastua && yarn && pm2 reload pm2.config.js'
+        ssh staging 'cd ~/dev/fiatvoluntastua && yarn && yarn build && pm2 reload pm2.config.js'
