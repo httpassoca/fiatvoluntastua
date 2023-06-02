@@ -10,12 +10,13 @@ bot.on("message", async (ctx) => {
   if (ctx.from.username === 'Nagattin') {
     await ctx.reply('kkkkkkkkkkk bicha');
   }
+
   if (ctx.from.username === 'alvixxo' && alvaroViado) {
     alvaroViado = false;
     await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
   }
 
-  if (ctx.message.text && !ctx.message.text.includes('kkkk') && !ctx.message.text.includes('KKKK')) {
+  if (ctx.message.text && ctx.message.text.includes('gpt')) {
     const answer = await gptAnswer(ctx.message.text);
     await ctx.reply(answer, { reply_to_message_id: ctx.message.message_id });
   }
