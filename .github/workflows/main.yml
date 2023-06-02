@@ -44,9 +44,7 @@ jobs:
           IdentityFile ~/.ssh/staging.key
           StrictHostKeyChecking no
         END
-
-    - name: ENV
-      run: env|sort|grep 'SSH'
+        cat ~/.ssh/config
 
     - name: Deploy
       run: |
