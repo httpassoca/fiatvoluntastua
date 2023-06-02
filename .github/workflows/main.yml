@@ -29,9 +29,6 @@ jobs:
       run: yarn build
 
 
-    - name: ENV
-      run: env|sort
-
     - name: SSH
       env:
         SSH_USER: ${{ secrets.SSH_USER }}
@@ -48,7 +45,10 @@ jobs:
             IdentityFile ~/.ssh/staging.key
             StrictHostKeyChecking no
           END
-          
+
+    - name: ENV
+      run: env|sort
+
     - name: Deploy
       run: |
         ssh staging 'cd ~/dev/fiatvoluntastua && npm && pm2 reload pm2.config.js'
