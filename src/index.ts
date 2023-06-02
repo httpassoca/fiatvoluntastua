@@ -15,6 +15,9 @@ bot.on("message", async (ctx) => {
     alvaroViado = false;
     await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
   }
+  if (ctx.from.username === 'udontknowmeson') {
+    await ctx.reply('based.');
+  }
 
   if (ctx.message.text && ctx.message.text.includes('gpt')) {
     const answer = await gptAnswer(ctx.message.text);
