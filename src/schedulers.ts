@@ -7,13 +7,13 @@ const videoSextaLink = 'https://tbnaluslgxzikblascgb.supabase.co/storage/v1/obje
 
 export const schedulers = (bot: Bot) => {
   // Saturday 4pm
-  cron.schedule('0 16 * * 6', () => {
+  cron.schedule('0 15 * * 6', () => {
     console.log('Sent roleta scheduled');
     bot.api.sendMessage(PUCUNAID, 'Tem roleta amanhã 22h')
   });
 
   // Friday 12am
-  cron.schedule('0 12 * * 5', () => {
+  cron.schedule('0 11 * * 5', () => {
     console.log('Sent friday fast scheduled');
     bot.api.sendVideo(PUCUNAID, videoSextaLink)
   });
