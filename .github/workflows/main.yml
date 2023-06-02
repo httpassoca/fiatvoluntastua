@@ -31,9 +31,9 @@ jobs:
     - name: Deploy
       uses: appleboy/ssh-action@v0.1.10
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd ~/dev/fiatvoluntastua
           npm
