@@ -34,9 +34,12 @@ jobs:
       run: yarn build
 
   deploy:
+    runs-on: ubuntu-latest
+
     steps:
-    - name: SSH
+    - name: ENV
       run: env|sort
+    - name: SSH
       run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/staging.key
