@@ -21,6 +21,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+      
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
 
     - name: Dependencies
       run: yarn
@@ -28,14 +33,19 @@ jobs:
     - name: Build
       run: yarn build
 
+    - name: SSH
+      run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
+          END
+          
     - name: Deploy
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd ~/dev/fiatvoluntastua
-          npm
-          pm2 reload pm2.config.js
-
+      run: |
+        ssh staging 'cd ~/dev/fiatvoluntastua && npm && pm2 reload pm2.config.js'
