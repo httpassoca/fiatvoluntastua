@@ -26,12 +26,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
-    - name: Dependencies
-      run: yarn
-
-    - name: Build
-      run: yarn build
-
     - name: SSH
       run: |
         mkdir -p ~/.ssh/
@@ -46,6 +40,6 @@ jobs:
         END
         cat ~/.ssh/config
 
-    - name: Deploy
+    - name: Build
       run: |
-        ssh staging 'cd ~/dev/fiatvoluntastua && yarn && yarn build && pm2 reload pm2.config.js'
+        ssh staging 'cd ~/dev/fiatvoluntastua && git pull && yarn && yarn build && pm2 reload pm2.config.js'
