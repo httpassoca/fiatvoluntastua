@@ -10,6 +10,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+
     strategy:
       matrix:
         node-version: [14.x]
@@ -21,11 +26,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-      
-      env:
-        SSH_USER: ${{ secrets.SSH_USER }}
-        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SSH_HOST: ${{ secrets.SSH_HOST }}
 
     - name: Dependencies
       run: yarn
@@ -33,12 +33,10 @@ jobs:
     - name: Build
       run: yarn build
 
-  deploy:
-    runs-on: ubuntu-latest
 
-    steps:
     - name: ENV
       run: env|sort
+
     - name: SSH
       run: |
           mkdir -p ~/.ssh/
