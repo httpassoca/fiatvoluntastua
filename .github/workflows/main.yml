@@ -1,11 +1,15 @@
 name: CI
 run-name: ${{ github.actor }} is pushing to master
-
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
+env:
+  SSH_USER: ${{ secrets.SSH_USER }}
+  SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
 
 jobs:
   build:
@@ -30,10 +34,7 @@ jobs:
 
 
     - name: SSH
-      env:
-        SSH_USER: ${{ secrets.SSH_USER }}
-        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SSH_HOST: ${{ secrets.SSH_HOST }}
+      
       run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/staging.key
@@ -47,7 +48,7 @@ jobs:
           END
 
     - name: ENV
-      run: env|sort
+      run: env|sort|grep 'SSH'
 
     - name: Deploy
       run: |
