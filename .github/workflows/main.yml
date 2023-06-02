@@ -48,4 +48,4 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh staging 'cd ~/dev/fiatvoluntastua && npm && pm2 reload pm2.config.js'
+        ssh staging 'whoami && pwd'
