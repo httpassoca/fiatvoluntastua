@@ -17,6 +17,4 @@ export const schedulers = (bot: Bot) => {
     console.log('Sent friday fast scheduled');
     bot.api.sendVideo(PUCUNAID, videoSextaLink)
   });
-
-
 }

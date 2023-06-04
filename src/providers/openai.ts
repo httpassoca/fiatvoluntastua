@@ -8,9 +8,14 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export async function gptAnswer(question: string): Promise<string> {
-  const gpt = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: question }],
-  });
-  return gpt.data.choices[0].message?.content || 'gpt foi de base kkkkkkk';
+  try {
+    const gpt = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: question }],
+    });
+    console.log(question);
+    return gpt.data.choices[0].message?.content || 'gpt foi de base kkkkkkk';
+  } catch (error) {
+    return error as string;
+  }
 }
