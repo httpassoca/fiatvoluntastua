@@ -20,7 +20,7 @@ export async function gptAnswer(question: string, username: string = 'gay'): Pro
     }
     if (
       answer.includes('modelo de linguagem') ||
-      answer.includes('inteligênccia artificial') ||
+      answer.includes('inteligência artificial') ||
       answer.includes('Como uma IA') ||
       answer.includes('Como IA')
     ) {
