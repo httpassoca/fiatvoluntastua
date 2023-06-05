@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
 import { telegramBotToken } from "./config";
-import { gptAnswer } from "./providers/openai";
+import { gptAnswer, gptImg } from "./providers/openai";
 import { schedulers } from "./schedulers";
 
 const bot = new Bot(telegramBotToken);
@@ -19,6 +19,10 @@ bot.on("message:text", async (ctx) => {
   if (ctx.message.text.includes('gpt')) {
     const answer = await gptAnswer(ctx.message.text, ctx.message.forward_sender_name);
     await ctx.reply(answer, { reply_to_message_id: ctx.message.message_id });
+  }
+  if (ctx.message.text.includes('gptimg')) {
+    const imgUrl = await gptImg(ctx.message.text);
+    await ctx.replyWithPhoto(imgUrl, { reply_to_message_id: ctx.message.message_id });
   }
 
   if (ctx.message.text.includes('deus')) {
