@@ -17,7 +17,7 @@ bot.on("message:text", async (ctx) => {
   }
 
   if (ctx.message.text.includes('gpt')) {
-    const answer = await gptAnswer(ctx.message.text);
+    const answer = await gptAnswer(ctx.message.text, ctx.message.forward_sender_name);
     await ctx.reply(answer, { reply_to_message_id: ctx.message.message_id });
   }
 

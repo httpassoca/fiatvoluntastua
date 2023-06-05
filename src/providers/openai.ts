@@ -7,11 +7,11 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export async function gptAnswer(question: string): Promise<string> {
+export async function gptAnswer(question: string, username: string = 'gay'): Promise<string> {
   try {
     const gpt = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: question }],
+      messages: [{ role: "user", content: question, name: username }],
     });
     console.log(question);
     return gpt.data.choices[0].message?.content || 'gpt foi de base kkkkkkk';
