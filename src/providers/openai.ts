@@ -14,7 +14,14 @@ export async function gptAnswer(question: string, username: string = 'gay'): Pro
       messages: [{ role: "user", content: question, name: username }],
     });
     console.log(question);
-    return data.choices[0].message?.content || 'gpt foi de base kkkkkkk';
+    let answer: string | undefined = data.choices[0].message?.content;
+    if(!answer) {
+      return 'gpt foi de base kkkkkk'
+    }
+    if(answer.includes('Desculpe, como') || answer.includes('Como IA')) {
+      answer = answer.slice(answer.indexOf('.') + 2, x.length);
+    }
+    return answer
   } catch (error) {
     return error as string;
   }
