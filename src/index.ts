@@ -25,7 +25,7 @@ bot.on("message:text", async (ctx) => {
     await ctx.replyWithPhoto(imgUrl, { reply_to_message_id: ctx.message.message_id });
   }
 
-  if (/\bdeus\b/.test(ctx.message.text.includes)) {
+  if (/\bdeus\b/.test(ctx.message.text)) {
     const img = 'https://i.imgur.com/nfZV54N.jpg';
     await ctx.replyWithPhoto(img, { reply_to_message_id: ctx.message.message_id })
   }

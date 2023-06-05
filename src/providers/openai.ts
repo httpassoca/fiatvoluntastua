@@ -15,11 +15,11 @@ export async function gptAnswer(question: string, username: string = 'gay'): Pro
     });
     console.log(question);
     let answer: string | undefined = data.choices[0].message?.content;
-    if(!answer) {
+    if (!answer) {
       return 'gpt foi de base kkkkkk'
     }
-    if(answer.includes('Desculpe, como') || answer.includes('Como IA')) {
-      answer = answer.slice(answer.indexOf('.') + 2, x.length);
+    if (answer.includes('Desculpe, como') || answer.includes('Como IA')) {
+      answer = answer.slice(answer.indexOf('.') + 2, answer.length);
     }
     return answer
   } catch (error) {
