@@ -18,7 +18,11 @@ export async function gptAnswer(question: string, username: string = 'gay'): Pro
     if (!answer) {
       return 'gpt foi de base kkkkkk'
     }
-    if (answer.includes('inteligência artificial') || answer.includes('Como IA')) {
+    if (
+      answer.includes('modelo de linguagem') ||
+      answer.includes('inteligência artificial') ||
+      answer.includes('Como IA')
+    ) {
       answer = answer.slice(answer.indexOf('.') + 2, answer.length);
     }
     return answer
