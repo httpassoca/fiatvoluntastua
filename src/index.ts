@@ -7,10 +7,6 @@ const bot = new Bot(telegramBotToken);
 let alvaroViado = true;
 
 bot.on("message:text", async (ctx) => {
-  if (ctx.from.username === 'Nagattin') {
-    await ctx.reply('kkkkkkkkkkk bicha');
-  }
-
   if (ctx.from.username === 'alvixxo' && alvaroViado) {
     alvaroViado = false;
     await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
