@@ -33,15 +33,14 @@ bot.on("message:text", async (ctx) => {
   }
 });
 
-bot.on('message').command("clearData", async (ctx) => {
+bot.command("clearData", (ctx) => {
 
-  const replyMessage = { reply_to_message_id: ctx.message.message_id };
-  await ctx.reply('not passoca', replyMessage);
-  if (ctx.from.username === 'udontknowmeson') {
-    await ctx.reply('passoca', replyMessage);
+  const replyMessage = { reply_to_message_id: ctx.message?.message_id };
+  if (ctx.from?.username === 'udontknowmeson') {
+    ctx.reply(`passoca`, replyMessage);
     clearData();
     const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
-    await ctx.replyWithPhoto(imgUrl, replyMessage);
+    ctx.replyWithPhoto(imgUrl, replyMessage);
   }
 });
 
