@@ -37,6 +37,7 @@ bot.on("message:text", async (ctx) => {
     const imgUrl = await gptImg(ctx.message.text);
     await ctx.replyWithPhoto(imgUrl, replyMessage);
   }
+
   if (ctx.message.text.includes('banco')) {
     saveData(ctx.message.text.replace('banco', ''))
     await ctx.reply(readData(), replyMessage);
@@ -45,6 +46,9 @@ bot.on("message:text", async (ctx) => {
   if (/\bdeus\b/.test(ctx.message.text)) {
     const img = 'https://i.imgur.com/nfZV54N.jpg';
     await ctx.replyWithPhoto(img, replyMessage)
+  }
+  if (ctx.message.text.includes('myid')) {
+    await ctx.reply(ctx.from.id.toString(), replyMessage);
   }
 });
 
