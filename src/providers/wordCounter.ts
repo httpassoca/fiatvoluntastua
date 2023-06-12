@@ -18,7 +18,6 @@ export function addWord(chat: number, data: string, times = 1, user: string): vo
   const lines = fs.readFileSync(dataFilePath, 'utf-8').split('\n').filter(Boolean);
   for (let i = 0; i < lines.length; i++) {
     const json: WordLine = JSON.parse(lines[i]);
-    console.log(json)
     if (chat !== json.chatId) continue;
     if (json.word !== data) continue;
     json.times += times;
@@ -28,7 +27,8 @@ export function addWord(chat: number, data: string, times = 1, user: string): vo
     added = true;
   }
   if (!added) {
-    const string = JSON.stringify([chat, data, 1, [{ user: 1 }]]);
+    const line: WordLine = { chatId: chat, word: data, times: 1, users: { [user]: 1 } }
+    const string = JSON.stringify(line);
     fs.appendFileSync(dataFilePath, `${string}\n`);
   }
 
