@@ -9,3 +9,6 @@ export function saveData(data: string): void {
 export function readData(): string {
   return fs.readFileSync(dataFilePath, 'utf-8');
 }
+export function clearData(): void {
+  fs.writeFileSync(dataFilePath, '');
+}
