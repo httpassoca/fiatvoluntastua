@@ -8,6 +8,7 @@ const bot = new Bot(telegramBotToken);
 let alvaroViado = true;
 
 bot.on("message:text", async (ctx) => {
+  const replyMessage = { reply_to_message_id: ctx.message.message_id };
   if (ctx.from.username === 'alvixxo' && alvaroViado) {
     alvaroViado = false;
     await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
@@ -15,20 +16,20 @@ bot.on("message:text", async (ctx) => {
 
   if (ctx.message.text.includes('gpt ')) {
     const answer = await gptAnswer(ctx.message.text, ctx.message.forward_sender_name);
-    await ctx.reply(answer, { reply_to_message_id: ctx.message.message_id });
+    await ctx.reply(answer, replyMessage);
   }
   if (ctx.message.text.includes('gptimg')) {
     const imgUrl = await gptImg(ctx.message.text);
-    await ctx.replyWithPhoto(imgUrl, { reply_to_message_id: ctx.message.message_id });
+    await ctx.replyWithPhoto(imgUrl, replyMessage);
   }
   if (ctx.message.text.includes('banco')) {
     saveData(ctx.message.text)
-    await ctx.reply('saved', { reply_to_message_id: ctx.message.message_id });
+    await ctx.reply('saved', replyMessage);
   }
 
   if (/\bdeus\b/.test(ctx.message.text)) {
     const img = 'https://i.imgur.com/nfZV54N.jpg';
-    await ctx.replyWithPhoto(img, { reply_to_message_id: ctx.message.message_id })
+    await ctx.replyWithPhoto(img, replyMessage)
   }
 });
 
