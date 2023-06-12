@@ -1,8 +1,10 @@
 import { Bot } from "grammy";
 import { telegramBotToken } from "./config";
+import { PASSOCAID, PUCUNAID } from "./data";
 import { gptAnswer, gptImg } from "./providers/openai";
-import { clearData, readData, saveData } from "./providers/wordCounter";
-import { PUCUNAID, schedulers } from "./schedulers";
+import { addWord, clearData, readData } from "./providers/wordCounter";
+import { schedulers } from "./schedulers";
+import { countOccurrences } from "./utils";
 
 const bot = new Bot(telegramBotToken);
 let alvaroViado = true;
@@ -38,10 +40,6 @@ bot.on("message:text", async (ctx) => {
     await ctx.replyWithPhoto(imgUrl, replyMessage);
   }
 
-  if (ctx.message.text.includes('banco')) {
-    saveData(ctx.message.text.replace('banco', ''))
-    await ctx.reply(readData(), replyMessage);
-  }
 
   if (/\bdeus\b/.test(ctx.message.text)) {
     const img = 'https://i.imgur.com/nfZV54N.jpg';
@@ -50,12 +48,16 @@ bot.on("message:text", async (ctx) => {
   if (ctx.message.text.includes('myid')) {
     await ctx.reply(ctx.from.id.toString(), replyMessage);
   }
+  if (ctx.message.text.includes('negro')) {
+    const count = countOccurrences(ctx.message.text, 'negro');
+    addWord(ctx.message.chat.id, 'negro', count, ctx.from.username || `x`);
+    await ctx.api.sendMessage(PASSOCAID, readData(), replyMessage);
+  }
 });
 
 
 schedulers(bot);
 
 //Start the Bot
-bot.start().then(() => {
-  bot.api.sendMessage(PUCUNAID, 'de cima é viado kkkkkkkkkkkkkkkkkkkk')
-});
+bot.start()
+bot.api.sendMessage(PUCUNAID, 'de cima é viado kkkkkkkkkkkkkkkkkkkk')
