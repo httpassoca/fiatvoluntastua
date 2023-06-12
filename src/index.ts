@@ -52,10 +52,9 @@ bot.on("message:text", async (ctx) => {
     const count = countOccurrences(ctx.message.text, 'negro');
     console.log(count)
     addWord(ctx.message.chat.id, 'negro', count, ctx.from.username || 'x');
-    await ctx.api.sendMessage(PASSOCAID, readData(), replyMessage);
+    await ctx.api.sendMessage(PASSOCAID, readData());
   }
 });
-
 
 schedulers(bot);
 
