@@ -50,7 +50,8 @@ bot.on("message:text", async (ctx) => {
   }
   if (ctx.message.text.includes('negro')) {
     const count = countOccurrences(ctx.message.text, 'negro');
-    addWord(ctx.message.chat.id, 'negro', count, ctx.from.username || `x`);
+    console.log(count)
+    addWord(ctx.message.chat.id, 'negro', count, ctx.from.username || 'x');
     await ctx.api.sendMessage(PASSOCAID, readData(), replyMessage);
   }
 });

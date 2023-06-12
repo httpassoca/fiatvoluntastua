@@ -16,7 +16,7 @@ const dataFilePath = './data.txt'; // Path to the data file
 export function addWord(chat: number, data: string, times = 1, user: string): void {
   let added = false;
   const lines = fs.readFileSync(dataFilePath, 'utf-8').split('\n').filter(Boolean);
-
+  console.log(lines)
   for (let i = 0; i < lines.length; i++) {
     const json: WordLine = JSON.parse(lines[i]);
     if (chat !== json.chatId) continue;
