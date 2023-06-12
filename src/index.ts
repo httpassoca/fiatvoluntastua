@@ -2,18 +2,23 @@ import { Bot } from "grammy";
 import { telegramBotToken } from "./config";
 import { gptAnswer, gptImg } from "./providers/openai";
 import { clearData, readData, saveData } from "./providers/wordCounter";
-import { schedulers } from "./schedulers";
+import { PUCUNAID, schedulers } from "./schedulers";
 
 const bot = new Bot(telegramBotToken);
 let alvaroViado = true;
 
-bot.command("clearData", (ctx) => {
+bot.api.setMyCommands([
+  { command: "cleardata", description: "Just Passoca knows" },
+]);
+
+bot.command("cleardata", async (ctx) => {
   const replyMessage = { reply_to_message_id: ctx.message?.message_id };
   if (ctx.from?.username === 'udontknowmeson') {
-    ctx.reply(`passoca`, replyMessage);
     clearData();
     const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
-    ctx.replyWithPhoto(imgUrl, replyMessage);
+    ctx.replyWithVideo(imgUrl, replyMessage);
+  } else {
+    ctx.reply('morre brother', replyMessage);
   }
 });
 
@@ -47,4 +52,6 @@ bot.on("message:text", async (ctx) => {
 schedulers(bot);
 
 //Start the Bot
-bot.start();
+bot.start().then(() => {
+  bot.api.sendMessage(PUCUNAID, 'de cima é viado kkkkkkkkkkkkkkkkkkkk')
+});
