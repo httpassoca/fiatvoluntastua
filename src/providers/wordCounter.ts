@@ -21,7 +21,7 @@ export function addWord(chat: number, data: string, times = 1, user: string): vo
     if (chat !== json.chatId) continue;
     if (json.word !== data) continue;
     json.times += times;
-    json.users[user] += times;
+    json.users[user] = json.users[user] ? json.users[user] += times : times;
     lines[i] = JSON.stringify(json);
     fs.writeFileSync(dataFilePath, lines.join('/n'));
     added = true;
