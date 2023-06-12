@@ -1,7 +1,7 @@
 import { Bot } from "grammy";
 import { telegramBotToken } from "./config";
 import { gptAnswer, gptImg } from "./providers/openai";
-import { clearData, saveData } from "./providers/wordCounter";
+import { clearData, readData, saveData } from "./providers/wordCounter";
 import { schedulers } from "./schedulers";
 
 const bot = new Bot(telegramBotToken);
@@ -24,6 +24,7 @@ bot.on("message:text", async (ctx) => {
   }
   if (ctx.message.text.includes('banco')) {
     saveData(ctx.message.text.replace('banco', ''))
+    await ctx.reply(readData(), replyMessage);
   }
 
   if (/\bdeus\b/.test(ctx.message.text)) {
@@ -33,8 +34,11 @@ bot.on("message:text", async (ctx) => {
 });
 
 bot.on('message').command("clearData", async (ctx) => {
+
   const replyMessage = { reply_to_message_id: ctx.message.message_id };
+  await ctx.reply('not passoca', replyMessage);
   if (ctx.from.username === 'udontknowmeson') {
+    await ctx.reply('passoca', replyMessage);
     clearData();
     const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
     await ctx.replyWithPhoto(imgUrl, replyMessage);
