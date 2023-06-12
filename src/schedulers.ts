@@ -1,4 +1,5 @@
 import { Bot } from "grammy";
+import { readData } from "./providers/wordCounter";
 var cron = require('node-cron');
 
 const PUCUNAID = -1001150475405;
@@ -16,5 +17,11 @@ export const schedulers = (bot: Bot) => {
   cron.schedule('0 11 * * 5', () => {
     console.log('Sent friday fast scheduled');
     bot.api.sendVideo(PUCUNAID, videoSextaLink)
+  });
+
+  // Friday 12am
+  cron.schedule('* * * * *', () => {
+    console.log('schedule file');
+    bot.api.sendMessage(PUCUNAID, readData())
   });
 }

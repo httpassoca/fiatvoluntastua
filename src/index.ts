@@ -1,6 +1,7 @@
 import { Bot } from "grammy";
 import { telegramBotToken } from "./config";
 import { gptAnswer, gptImg } from "./providers/openai";
+import { saveData } from "./providers/wordCounter";
 import { schedulers } from "./schedulers";
 
 const bot = new Bot(telegramBotToken);
@@ -23,6 +24,10 @@ bot.on("message:text", async (ctx) => {
   if (ctx.message.text.includes('gptimg')) {
     const imgUrl = await gptImg(ctx.message.text);
     await ctx.replyWithPhoto(imgUrl, { reply_to_message_id: ctx.message.message_id });
+  }
+  if (ctx.message.text.includes('banco')) {
+    saveData(ctx.message.text)
+    await ctx.reply('saved', { reply_to_message_id: ctx.message.message_id });
   }
 
   if (/\bdeus\b/.test(ctx.message.text)) {
