@@ -7,6 +7,16 @@ import { schedulers } from "./schedulers";
 const bot = new Bot(telegramBotToken);
 let alvaroViado = true;
 
+bot.command("clearData", (ctx) => {
+  const replyMessage = { reply_to_message_id: ctx.message?.message_id };
+  if (ctx.from?.username === 'udontknowmeson') {
+    ctx.reply(`passoca`, replyMessage);
+    clearData();
+    const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
+    ctx.replyWithPhoto(imgUrl, replyMessage);
+  }
+});
+
 bot.on("message:text", async (ctx) => {
   const replyMessage = { reply_to_message_id: ctx.message.message_id };
   if (ctx.from.username === 'alvixxo' && alvaroViado) {
@@ -33,16 +43,6 @@ bot.on("message:text", async (ctx) => {
   }
 });
 
-bot.command("clearData", (ctx) => {
-
-  const replyMessage = { reply_to_message_id: ctx.message?.message_id };
-  if (ctx.from?.username === 'udontknowmeson') {
-    ctx.reply(`passoca`, replyMessage);
-    clearData();
-    const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
-    ctx.replyWithPhoto(imgUrl, replyMessage);
-  }
-});
 
 schedulers(bot);
 
