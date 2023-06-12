@@ -22,6 +22,9 @@ bot.on("message:text", async (ctx) => {
     const imgUrl = await gptImg(ctx.message.text);
     await ctx.replyWithPhoto(imgUrl, replyMessage);
   }
+  if (ctx.message.text.includes('banco')) {
+    saveData(ctx.message.text.replace('banco', ''))
+  }
 
   if (/\bdeus\b/.test(ctx.message.text)) {
     const img = 'https://i.imgur.com/nfZV54N.jpg';
@@ -29,9 +32,9 @@ bot.on("message:text", async (ctx) => {
   }
 });
 
-bot.command("clearData", async (ctx) => {
-  const replyMessage = { reply_to_message_id: ctx.message?.message_id };
-  if (ctx.from?.username === 'udontknowmeson') {
+bot.on('message').command("clearData", async (ctx) => {
+  const replyMessage = { reply_to_message_id: ctx.message.message_id };
+  if (ctx.from.username === 'udontknowmeson') {
     clearData();
     const imgUrl = "https://media.tenor.com/_HboCW9bxI4AAAAC/jjba-jojo.gif";
     await ctx.replyWithPhoto(imgUrl, replyMessage);
