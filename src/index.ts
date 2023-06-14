@@ -90,4 +90,3 @@ schedulers(bot);
 
 //Start the Bot
 bot.start()
-bot.api.sendMessage(PUCUNAID, 'de cima é viado kkkkkkkkkkkkkkkkkkkk')
