@@ -14,7 +14,7 @@ bot.api.setMyCommands([
   { command: "senddata", description: "Just Passoca knows" },
 ]);
 
-bot.command("cleardata", async (ctx) => {
+bot.command("cleardata", (ctx) => {
   const replyMessage = { reply_to_message_id: ctx.message?.message_id };
   if (ctx.from?.username === 'udontknowmeson') {
     clearData();
@@ -25,9 +25,9 @@ bot.command("cleardata", async (ctx) => {
   }
 });
 
-bot.command("senddata", async (ctx) => {
+bot.command("senddata", (ctx) => {
   if (ctx.from?.username === 'udontknowmeson') {
-    await ctx.api.sendMessage(PASSOCAID, readData());
+    ctx.api.sendMessage(PASSOCAID, readData());
   } else {
     ctx.reply('morre brother');
   }
