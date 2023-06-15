@@ -27,7 +27,11 @@ bot.command("cleardata", (ctx) => {
 
 bot.command("senddata", (ctx) => {
   if (ctx.from?.username === 'udontknowmeson') {
-    ctx.api.sendMessage(PASSOCAID, readData());
+    try {
+      ctx.api.sendMessage(PASSOCAID, readData());
+    } catch (error) {
+      ctx.reply(`deu erro man: ${error}`);
+    }
   } else {
     ctx.reply('morre brother');
   }
