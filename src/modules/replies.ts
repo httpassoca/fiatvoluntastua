@@ -18,8 +18,12 @@ export const addReplies = (bot: Bot) => {
     }
 
     if (ctx.message.text.includes('gptimg')) {
-      const imgUrl = await gptAnswerImage(ctx.message.text);
-      await ctx.replyWithPhoto(imgUrl, replyMessage);
+      try {
+        const imgUrl = await gptAnswerImage(ctx.message.text);
+        await ctx.replyWithPhoto(imgUrl, replyMessage);
+      } catch (error) {
+        await ctx.reply(error as string, replyMessage);
+      }
     }
 
     if (/\bdeus\b/.test(ctx.message.text)) {
