@@ -14,7 +14,14 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message.text.includes('gpt ')) {
       const answer = await gptAnswer(ctx.message.text, ctx.message.forward_sender_name);
-      await ctx.reply(answer, replyMessage);
+      if(answer.length > 4000) {
+        let half = answer.slice(0, answer.length/2);
+        await ctx.reply(half, replyMessage);
+        half = answer.slice(answer.length/2, answer.length);
+        await ctx.reply(half, replyMessage);
+      } else {
+        await ctx.reply(answer, replyMessage);
+      }
     }
 
     if (ctx.message.text.includes('gptimg')) {
