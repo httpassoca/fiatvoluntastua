@@ -18,7 +18,7 @@ export const addReplies = (bot: Bot) => {
         let half = answer.slice(0, answer.length/2);
         await ctx.reply(half, replyMessage);
         half = answer.slice(answer.length/2, answer.length);
-        await ctx.reply(half, replyMessage);
+        await ctx.reply(half);
       } else {
         await ctx.reply(answer, replyMessage);
       }
