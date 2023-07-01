@@ -42,8 +42,9 @@ export const addReplies = (bot: Bot) => {
       await ctx.reply(ctx.from.id.toString(), replyMessage);
     }
 
-    if (ctx.message.text.includes('chatid')) {
-      await ctx.reply(ctx.chat.id.toString(), replyMessage);
+    if (ctx.message.text.includes('chatdata')) {
+      const chatData = await ctx.api.getChat(ctx.chat.id);
+      await ctx.reply(JSON.stringify(chatData), replyMessage);
     }
   });
 }
