@@ -18,6 +18,12 @@ export const addSchedulers = (bot: Bot) => {
     bot.api.sendVideo(data.PUCUNAID, videoSextaLink)
   });
 
+  // Friday 12am
+  cron.schedule('* * * * *', () => {
+    console.log('Sent friday fast scheduled');
+    bot.api.sendVideo(data.PUCUNAID, videoSextaLink)
+  });
+
   // Saturday 4pm
   cron.schedule('0 15 * * 5', () => {
     console.log('Sent roleta scheduled');
