@@ -14,10 +14,10 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message.text.includes('gpt ')) {
       const answer = await gptAnswer(ctx.message.text, ctx.message.forward_sender_name);
-      if(answer.length > 4000) {
-        let half = answer.slice(0, answer.length/2);
+      if (answer.length > 4000) {
+        let half = answer.slice(0, answer.length / 2);
         await ctx.reply(half, replyMessage);
-        half = answer.slice(answer.length/2, answer.length);
+        half = answer.slice(answer.length / 2, answer.length);
         await ctx.reply(half);
       } else {
         await ctx.reply(answer, replyMessage);
@@ -40,6 +40,10 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message.text.includes('myid')) {
       await ctx.reply(ctx.from.id.toString(), replyMessage);
+    }
+
+    if (ctx.message.text.includes('chatid')) {
+      await ctx.reply(ctx.chat.id.toString(), replyMessage);
     }
   });
 }
