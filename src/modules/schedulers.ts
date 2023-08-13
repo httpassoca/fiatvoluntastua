@@ -26,72 +26,27 @@ export const addSchedulers = (bot: Bot) => {
     bot.api.sendMessage(data.PUCUNAID, "Tem roleta amanhã 22h/18h");
   });
 
-  cron.schedule("0 6 * * *", () => {
-    bot.api.sendMessage(
-      data.PUCUNAID,
-      `
-    HORA DO ANGELUS 
-O anjo do Senhor anunciou a Maria.
-E ela concebeu do Espírito Santo.
-Ave Maria…
-Eis aqui a serva do Senhor.
-Faça-se em mim segundo a vossa 
-Palavra.
-Ave Maria…
-E o Verbo se fez carne.
-E habitou entre nós.
-Ave, Maria…
+  // cron.schedule("0 6 * * *", () => {
+  //   bot.api.sendMessage(
+  //     data.PUCUNAID,
+  //     `
+  //       HORA DO ANGELUS 
+  //       O anjo do Senhor anunciou a Maria.
+  //       E ela concebeu do Espírito Santo.
+  //       Ave Maria…
+  //       Eis aqui a serva do Senhor.
+  //       Faça-se em mim segundo a vossa 
+  //       Palavra.
+  //       Ave Maria…
+  //       E o Verbo se fez carne.
+  //       E habitou entre nós.
+  //       Ave, Maria…
 
-Rogai por nós, santa Mãe de Deus.
-Para que sejamos dignos das promessas de Cristo.
+  //       Rogai por nós, santa Mãe de Deus.
+  //       Para que sejamos dignos das promessas de Cristo.
 
-Oremos: Infundi, Senhor, vos rogamos, a vossa graça em nossos corações, para que nós, conhecendo pela anunciação do anjo a encarnação de Jesus Cristo, vosso Filho, por sua Paixão e morte de cruz, cheguemos à glória da Ressurreição, pelo mesmo Cristo nosso Senhor. Amém.
-`
-    );
-  });
-
-  cron.schedule("0 12 * * *", () => {
-    bot.api.sendMessage(
-      data.PUCUNAID,
-      `
-    HORA DO ANGELUS 
-O anjo do Senhor anunciou a Maria.
-E ela concebeu do Espírito Santo.
-Ave Maria…
-Eis aqui a serva do Senhor.
-Faça-se em mim segundo a vossa 
-Palavra.
-Ave Maria…
-E o Verbo se fez carne.
-E habitou entre nós.
-Ave, Maria…
-
-Rogai por nós, santa Mãe de Deus.
-Para que sejamos dignos das promessas de Cristo.
-
-Oremos: Infundi, Senhor, vos rogamos, a vossa graça em nossos corações, para que nós, conhecendo pela anunciação do anjo a encarnação de Jesus Cristo, vosso Filho, por sua Paixão e morte de cruz, cheguemos à glória da Ressurreição, pelo mesmo Cristo nosso Senhor. Amém.`
-    );
-  });
-
-  cron.schedule("0 18 * * *", () => {
-    bot.api.sendMessage(
-      data.PUCUNAID,
-      `HORA DO ANGELUS 
-    O anjo do Senhor anunciou a Maria.
-    E ela concebeu do Espírito Santo.
-    Ave Maria…
-    Eis aqui a serva do Senhor.
-    Faça-se em mim segundo a vossa 
-    Palavra.
-    Ave Maria…
-    E o Verbo se fez carne.
-    E habitou entre nós.
-    Ave, Maria…
-    
-    Rogai por nós, santa Mãe de Deus.
-    Para que sejamos dignos das promessas de Cristo.
-    
-    Oremos: Infundi, Senhor, vos rogamos, a vossa graça em nossos corações, para que nós, conhecendo pela anunciação do anjo a encarnação de Jesus Cristo, vosso Filho, por sua Paixão e morte de cruz, cheguemos à glória da Ressurreição, pelo mesmo Cristo nosso Senhor. Amém.`
-    );
-  });
+  //       Oremos: Infundi, Senhor, vos rogamos, a vossa graça em nossos corações, para que nós, conhecendo pela anunciação do anjo a encarnação de Jesus Cristo, vosso Filho, por sua Paixão e morte de cruz, cheguemos à glória da Ressurreição, pelo mesmo Cristo nosso Senhor. Amém.
+  //     `
+  //   );
+  // });
 };
