@@ -1,3 +1,4 @@
-import OpenAI from "openai";
+import OpenAiApi from "openai";
+import { openaiApiKey } from "../config";
 
-export const openai = new OpenAI();
+export const openai = new OpenAiApi({apiKey: openaiApiKey});
