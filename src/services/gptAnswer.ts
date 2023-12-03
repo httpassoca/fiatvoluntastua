@@ -1,14 +1,14 @@
 import { openai } from "../providers/openai";
 
-export async function gptAnswer(question: string, username: string = 'gay'): Promise<string> {
+export async function gptAnswer(question: string): Promise<string> {
   try {
-    const { data } = await openai.createChatCompletion({
+    const data = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: question, name: username }],
+      messages: [{ role: "system", content: question }],
     });
 
-    let answer: string | undefined = data.choices[0].message?.content;
-    if (!answer) {
+    let answer: string | null = data.choices[0].message?.content;
+    if (!answer || !data) {
       return 'gpt foi de base kkkkkk'
     }
     if (

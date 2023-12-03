@@ -1,8 +1,3 @@
-import { Configuration, OpenAIApi, ImagesResponse } from "openai";
-import { openAIToken } from "../config";
+import OpenAI from "openai";
 
-const configuration = new Configuration({
-  apiKey: openAIToken,
-});
-
-export const openai = new OpenAIApi(configuration);
+export const openai = new OpenAI();
