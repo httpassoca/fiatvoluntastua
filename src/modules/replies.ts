@@ -1,14 +1,14 @@
 import { Bot } from "grammy";
 import { gptAnswer } from "../services/gptAnswer";
 
-let alvaroViado = true;
+let firstMessageFrom = true;
 
 export const addReplies = (bot: Bot) => {
   bot.on("message:text", async (ctx) => {
     const replyMessage = { reply_to_message_id: ctx.message.message_id };
-    if (ctx.from.username === 'alvixxo' && alvaroViado) {
-      alvaroViado = false;
-      await ctx.reply('de cima é viado KKKKKKKKKKKKKK');
+    if (ctx.from.username === 'Nagattin' && firstMessageFrom) {
+      firstMessageFrom = false;
+      await ctx.reply('duvido vc parar de jogar GTA');
     }
 
     if (ctx.message.text.includes('gpt ')) {
