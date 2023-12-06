@@ -1,5 +1,6 @@
 import { Bot } from "grammy";
 import * as data from "../data.json";
+import { getRandomSalmo } from "../services/getRandomSalmos";
 var cron = require("node-cron");
 
 const videoSextaLink =
@@ -24,6 +25,12 @@ export const addSchedulers = (bot: Bot) => {
   cron.schedule("0 15 * * 5", () => {
     console.log("Sent roleta scheduled");
     bot.api.sendMessage(data.PUCUNAID, "Tem roleta amanhã 22h/18h");
+  });
+
+  // Everyday 12am
+  cron.schedule("0 12 * * *", () => {
+    console.log("Sent Salmos scheduled");
+    bot.api.sendMessage(data.PUCUNAID, getRandomSalmo());
   });
 
   // cron.schedule("0 6 * * *", () => {

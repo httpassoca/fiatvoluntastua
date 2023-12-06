@@ -5,6 +5,7 @@
     "module": "commonjs",
     "strict": true,
     "outDir": "build",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   }
 }
