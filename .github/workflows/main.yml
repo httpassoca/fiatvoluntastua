@@ -43,5 +43,5 @@ jobs:
       run: |
         ssh staging 'curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash'
         ssh staging 'sudo apt-get install -y nodejs'
-        ssh staging 'sudo npm i -g yarn'
+        ssh staging 'sudo npm i -g yarn pm2'
         ssh staging 'cd ~/dev/fiatvoluntastua && git pull && yarn && yarn build && pm2 reload pm2.config.js'
