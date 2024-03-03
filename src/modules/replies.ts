@@ -9,9 +9,9 @@ let firstMessageFrom = true;
 export const addReplies = (bot: Bot) => {
   bot.on("message:text", async (ctx) => {
     const replyMessage = { reply_to_message_id: ctx.message.message_id };
-    if (ctx.from.username === 'Nagattin' && firstMessageFrom) {
+    if (ctx.from.username === 'temgnomosnaminhacasa079' && firstMessageFrom) {
       firstMessageFrom = false;
-      await ctx.reply('duvido vc parar de jogar GTA');
+      await ctx.reply('smt');
     }
 
     if (ctx.message.text.includes('gpt ')) {
@@ -42,7 +42,7 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message.text.includes('getSaldoVA') && ctx.from.id === data.PASSOCAID) {
       const username = `${process.env.VA_USERNAME}`;
-      const password = `${process.env.VA_PASSWORD}`; 
+      const password = `${process.env.VA_PASSWORD}`;
 
       callPythonScript('./scripts/getSaldoVA.py', [username, password])
         .then(output => {
