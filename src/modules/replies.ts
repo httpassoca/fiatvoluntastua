@@ -14,6 +14,10 @@ export const addReplies = (bot: Bot) => {
       await ctx.reply('smt');
     }
 
+    const chance = Math.random() <= 0.4;
+
+    if (chance) await ctx.reply('ta falando comigo?');
+
     if (ctx.message.text.includes('gpt ')) {
       const answer = await gptAnswer(ctx.message.text.replace('gpt ', ''));
       if (answer.length > 4000) {
