@@ -14,9 +14,6 @@ export const addReplies = (bot: Bot) => {
       await ctx.reply('smt');
     }
 
-    const chance = Math.random() <= 0.01;
-
-    if (chance) await ctx.reply('TA FALANDO COMIGO?');
 
     if (ctx.message.text.includes('gpt ')) {
       const answer = await gptAnswer(ctx.message.text.replace('gpt ', ''));
