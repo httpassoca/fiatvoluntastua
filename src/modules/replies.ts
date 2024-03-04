@@ -31,6 +31,9 @@ export const addReplies = (bot: Bot) => {
       const img = 'https://i.imgur.com/nfZV54N.jpg';
       await ctx.replyWithPhoto(img, replyMessage)
     }
+    if (/\bsmt\b/.test(ctx.message.text)) {
+      await ctx.reply('😂😂😂😂 smt 😂😂😂😂')
+    }
 
     if (ctx.message.text.includes('myid')) {
       await ctx.reply(ctx.from.id.toString(), replyMessage);
