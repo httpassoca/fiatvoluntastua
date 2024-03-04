@@ -14,7 +14,7 @@ export const addReplies = (bot: Bot) => {
       await ctx.reply('smt');
     }
 
-    const chance = Math.random() <= 0.4;
+    const chance = Math.random() <= 0.15;
 
     if (chance) await ctx.reply('ta falando comigo?');
 
