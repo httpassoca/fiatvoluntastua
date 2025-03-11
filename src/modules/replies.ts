@@ -1,8 +1,7 @@
 import { Bot } from "grammy";
 import { gptAnswer } from "../services/gptAnswer";
-import { callPythonScript } from "../services/runPythonScript";
-import * as data from "../data.json";
-import { formatTelegramMessage } from "../utils";
+import data from '../data.json';
+import media from '../mediaData.json';
 
 let firstMessageFrom = true;
 
@@ -39,22 +38,13 @@ export const addReplies = (bot: Bot) => {
       await ctx.reply(ctx.from.id.toString(), replyMessage);
     }
 
+    if (ctx.message.text.includes('asuka')) {
+      bot.api.sendPhoto(data.PUCUNAID, media.asukaLink);
+    }
+
     if (ctx.message.text.includes('chatdata')) {
       const chatData = await ctx.api.getChat(ctx.chat.id);
       await ctx.reply(JSON.stringify(chatData), replyMessage);
-    }
-
-    if (ctx.message.text.includes('getSaldoVA') && ctx.from.id === data.PASSOCAID) {
-      const username = `${process.env.VA_USERNAME}`;
-      const password = `${process.env.VA_PASSWORD}`;
-
-      callPythonScript('./scripts/getSaldoVA.py', [username, password])
-        .then(output => {
-          ctx.reply(formatTelegramMessage(JSON.parse(output)));
-        })
-        .catch(err => {
-          ctx.reply(`Error: ${err}`);
-        });
     }
   });
 }

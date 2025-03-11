@@ -26,7 +26,7 @@ export const addSchedulers = (bot: Bot) => {
   // Saturday 8pm
   cron.schedule("0 20 * * 6", () => {
     console.log("Sent Asuka scheduled");
-    bot.api.sendVideo(data.PUCUNAID, media.asukaLink);
+    bot.api.sendPhoto(data.PUCUNAID, media.asukaLink);
   });
 
   // Everyday 12am
