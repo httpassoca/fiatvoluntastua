@@ -1,47 +1,47 @@
-name: CI
-run-name: ${{ github.actor }} is pushing to master
+name: Prod Deployment
+
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-
-    strategy:
-      matrix:
-        node-version: [14.x]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v3
 
-    - name: SSH
-      run: |
-        mkdir -p ~/.ssh/
-        echo "$SSH_KEY" > ~/.ssh/staging.key
-        chmod 600 ~/.ssh/staging.key
-        cat >>~/.ssh/config <<END
-        Host staging
-          HostName $SSH_HOST
-          User $SSH_USER
-          IdentityFile ~/.ssh/staging.key
-          StrictHostKeyChecking no
-        END
-        cat ~/.ssh/config
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Build
-      run: |
-        ssh staging 'curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash'
-        ssh staging 'sudo apt-get install -y nodejs'
-        ssh staging 'sudo npm i -g yarn pm2'
-        ssh staging 'cd ~/dev/fiatvoluntastua && git pull && yarn && yarn build && pm2 reload pm2.config.js'
+      - name: Install and build
+        run: |
+          npm i
+          npm run build
+
+      - name: Copy to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: '.,!node_modules'
+          target: '~/dev/fiatvoluntastua'
+          overwrite: true
+          rm: true
+          timeout: 300s
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cp -a ~/backup/fiatvoluntastua/. ~/dev/fiatvoluntastua 
+            cd ~/dev/fiatvoluntastua
+            npm run docker:stop
+            npm run docker:build
+            npm run docker:start

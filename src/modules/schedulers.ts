@@ -40,9 +40,4 @@ export const addSchedulers = (bot: Bot) => {
     console.log("Sent Cristiano scheduled");
     bot.api.sendVideo(data.PUCUNAID, media.videoCristianoLink);
   });
-
-  // Everyday 6am
-  // cron.schedule("0 6 * * *", () => {
-  //   bot.api.sendMessage(data.PUCUNAID, 'hora do Angelus, fellas');
-  // });
 };
