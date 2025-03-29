@@ -40,7 +40,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cp -a ~/backup/fiatvoluntastua/. ~/dev/fiatvoluntastua 
+            cp -a ~/env/fiatvoluntastua/. ~/dev/fiatvoluntastua 
             cd ~/dev/fiatvoluntastua
             npm run docker:stop
             npm run docker:build
