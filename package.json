@@ -10,7 +10,7 @@
     "dev": "tsup src/index.ts --watch",
 
     "docker:build": "docker build --tag 'fiatvoluntastua' .",
-    "docker:start": "docker run --name 'fiatvoluntastua' -v ${PWD}/data:/src/data -d 'fiatvoluntastua'",
+    "docker:start": "docker run --name 'fiatvoluntastua' -v chat-data:/src/dist -d 'fiatvoluntastua'",
     "docker:stop": "docker stop fiatvoluntastua && docker rm fiatvoluntastua"
   },
   "dependencies": {

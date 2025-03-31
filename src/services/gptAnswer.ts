@@ -6,7 +6,7 @@ import * as path from 'path';
 const openai = new OpenAI();
 
 // Define the path to the chat history JSON file
-const CHAT_HISTORY_FILE = path.join(__dirname, 'data', 'chat_history.json');
+const CHAT_HISTORY_FILE = path.join(__dirname, 'chat_history.json');
 
 // Interface for a single message
 interface Message {
