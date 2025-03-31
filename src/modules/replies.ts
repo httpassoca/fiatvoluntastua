@@ -1,13 +1,21 @@
 import { Bot } from "grammy";
-import { gptAnswer } from "../services/gptAnswer";
 import data from '../data.json';
 import media from '../mediaData.json';
+import { gptAnswer } from "../services/gptAnswer";
 
 let firstMessageFrom = true;
 
 export const addReplies = (bot: Bot) => {
   bot.on("message:text", async (ctx) => {
     const replyMessage = { reply_to_message_id: ctx.message.message_id };
+
+    const randomNumber = Math.floor(Math.random() * 100);
+
+    // Check if the random number is within the 10% range (0 to 9)
+    if (randomNumber < 5) {
+      // Execute the callback function if the condition is met
+      await ctx.reply('vc eh retardado');
+    }
     if (ctx.from.username === 'temgnomosnaminhacasa079' && firstMessageFrom) {
       firstMessageFrom = false;
       await ctx.reply('smt');
@@ -15,14 +23,14 @@ export const addReplies = (bot: Bot) => {
 
 
     if (ctx.message.text.includes('gpt ')) {
-      const answer = await gptAnswer(ctx.message.text.replace('gpt ', ''));
+      const answer = await gptAnswer(ctx.message.text.replace('gpt ', ''), ctx.from.id.toString(), ctx.from.username);
       if (answer.length > 4000) {
         let half = answer.slice(0, answer.length / 2);
-        await ctx.reply(half, replyMessage);
+        await ctx.api.sendMessage(ctx.chat.id, half, { reply_to_message_id: ctx.message.message_id, parse_mode: 'Markdown' });
         half = answer.slice(answer.length / 2, answer.length);
-        await ctx.reply(half);
+        await ctx.api.sendMessage(ctx.chat.id, half, { reply_to_message_id: ctx.message.message_id, parse_mode: 'Markdown' });
       } else {
-        await ctx.reply(answer, replyMessage);
+        await ctx.api.sendMessage(ctx.chat.id, answer, { reply_to_message_id: ctx.message.message_id, parse_mode: 'Markdown' });
       }
     }
 

@@ -2,6 +2,7 @@ import { Bot } from "grammy";
 import * as data from "../data.json";
 import * as media from "../mediaData.json";
 import { getRandomSalmo } from "../services/getRandomSalmos";
+import { deleteOldMessages } from "../services/gptAnswer";
 var cron = require("node-cron");
 
 export const addSchedulers = (bot: Bot) => {
@@ -35,9 +36,11 @@ export const addSchedulers = (bot: Bot) => {
     bot.api.sendMessage(data.PUCUNAID, getRandomSalmo());
   });
 
-  // Everyday 9am
-  cron.schedule("0 6 * * *", () => {
-    console.log("Sent Cristiano scheduled");
-    bot.api.sendVideo(data.PUCUNAID, media.videoCristianoLink);
+  // Schedule the deletion of old messages to run weekly (e.g., every Monday at 3 AM)
+  cron.schedule('0 0 * * 0', async () => {
+    console.log('Running weekly chat history cleanup...');
+    bot.api.sendMessage(data.PUCUNAID, 'apagando o histórico de msg dos viadinhos');
+    const message = await deleteOldMessages();
+    bot.api.sendMessage(data.PUCUNAID, message);
   });
 };
