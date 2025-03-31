@@ -1,10 +1,10 @@
-import json from '../salmos.json'
+import json from '@/data/salmos.json';
 
 type Chapter = {
   chapter: number;
   text: string[];
 };
-const salmos: Chapter[] = json; 
+const salmos: Chapter[] = json;
 
 function getRandomItemFromArray(jsonArray: any[]) {
   // Check if the input array is empty or not an array

@@ -1,4 +1,4 @@
+import { openaiApiKey } from "@/config";
 import OpenAiApi from "openai";
-import { openaiApiKey } from "../config";
 
-export const openai = new OpenAiApi({apiKey: openaiApiKey});
+export const openai = new OpenAiApi({ apiKey: openaiApiKey });
