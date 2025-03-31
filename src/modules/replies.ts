@@ -12,7 +12,7 @@ export const addReplies = (bot: Bot) => {
     const randomNumber = Math.floor(Math.random() * 100);
 
     // Check if the random number is within the 10% range (0 to 9)
-    if (randomNumber < 5) {
+    if (randomNumber < 3) {
       // Execute the callback function if the condition is met
       await ctx.reply('vc eh retardado');
     }

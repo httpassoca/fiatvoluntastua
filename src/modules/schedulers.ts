@@ -36,8 +36,8 @@ export const addSchedulers = (bot: Bot) => {
     bot.api.sendMessage(data.PUCUNAID, getRandomSalmo());
   });
 
-  // Schedule the deletion of old messages to run weekly (e.g., every Monday at 3 AM)
-  cron.schedule('0 0 * * 0', async () => {
+  // Schedule the deletion of old messages to run 2 weekly (e.g., every Monday at 3 AM)
+  cron.schedule('0 0 1,15 * *', async () => {
     console.log('Running weekly chat history cleanup...');
     bot.api.sendMessage(data.PUCUNAID, 'apagando o histórico de msg dos viadinhos');
     const message = await deleteOldMessages();

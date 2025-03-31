@@ -6,7 +6,7 @@ import * as path from 'path';
 const openai = new OpenAI();
 
 // Define the path to the chat history JSON file
-const CHAT_HISTORY_FILE = path.join(__dirname, 'chat_history.json');
+const CHAT_HISTORY_FILE = path.join(__dirname, 'data', 'chat_history.json');
 
 // Interface for a single message
 interface Message {
@@ -97,18 +97,18 @@ export async function gptAnswer(question: string, userId: string, username?: str
 // Function to delete messages older than one week and log deleted counts with usernames
 export async function deleteOldMessages(): Promise<string> {
   const chatHistory = await loadChatHistory();
-  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000; // Calculate timestamp for one week ago
+  const twoWeeksAgo = Date.now() - 14 * 24 * 60 * 60 * 1000; // Calculate timestamp for two weeks ago
   const deletedCounts: { [userId: string]: { username?: string; count: number } } = {};
   const logs: string[] = [];
 
   for (const userId in chatHistory) {
     const initialMessageCount = chatHistory[userId].length;
-    const remainingMessages = chatHistory[userId].filter(msg => msg.timestamp >= oneWeekAgo);
+    const remainingMessages = chatHistory[userId].filter(msg => msg.timestamp >= twoWeeksAgo);
     const deletedCount = initialMessageCount - remainingMessages.length;
 
     if (deletedCount > 0) {
       // Try to get the username from one of the deleted messages (if any existed)
-      const firstDeletedMessage = chatHistory[userId].find(msg => msg.timestamp < oneWeekAgo);
+      const firstDeletedMessage = chatHistory[userId].find(msg => msg.timestamp < twoWeeksAgo);
       const username = firstDeletedMessage?.username;
 
       deletedCounts[userId] = { username, count: deletedCount };
