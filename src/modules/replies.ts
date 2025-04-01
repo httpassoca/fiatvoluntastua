@@ -4,7 +4,7 @@ import { gptAnswer } from '@/services/gptAnswer';
 import { Bot, Context } from 'grammy';
 
 // Configuration
-const RETARDED_REPLY_CHANCE = 3; // 3% chance to reply with "vc eh retardado"
+const RETARDED_REPLY_CHANCE = 1; // 1% chance to reply with "vc eh retardado"
 const GPT_COMMAND_PREFIX = 'gpt ';
 const MAX_MESSAGE_LENGTH = 4000;
 const DEUS_IMAGE_URL = 'https://i.imgur.com/nfZV54N.jpg';
