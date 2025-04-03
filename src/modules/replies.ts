@@ -113,6 +113,8 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message?.text?.includes('asuka')) await handleAsukaCommand(ctx);
 
+    if (ctx.message?.text?.includes('saturday')) await handleAsukaCommand(ctx);
+
     if (ctx.message?.text?.includes('chatdata')) await handleChatDataCommand(ctx);
   });
 };
