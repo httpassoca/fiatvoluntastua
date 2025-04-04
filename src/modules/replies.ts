@@ -81,7 +81,7 @@ const handleMyIdCommand = async (ctx: Context) => {
 };
 
 const handleAsukaCommand = async (ctx: Context) => {
-  await ctx.api.sendPhoto(telegramIds.PUCUNA, media.asukaLink);
+  await ctx.api.sendPhoto(telegramIds.COETUS, media.asukaLink);
 };
 
 const handleRandomRetardedReply = async (ctx: Context) => {
