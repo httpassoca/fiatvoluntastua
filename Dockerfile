@@ -6,6 +6,8 @@ COPY . .
 
 RUN npm ci
 
+RUN npm cache clean
+
 # Build the application
 RUN npm run build
 
