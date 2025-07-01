@@ -69,6 +69,7 @@ const handleChatDataCommand = async (ctx: Context) => {
 };
 
 const handleClearChatDataCommand = async (ctx: Context) => {
+  await ctx.reply('I got you');
   if (ctx.from?.id !== telegramIds.PASSOCA) {
     await ctx.reply('Sai fora irmão');
     return;
@@ -76,7 +77,7 @@ const handleClearChatDataCommand = async (ctx: Context) => {
   try {
     await ctx.reply('Cleaning old data...');
     const message = await deleteOldMessages();
-    ctx.reply(message);
+    ctx.reply(message, { parse_mode: 'Markdown' });
   } catch (error) {
     console.error('Error clearing chat data:', error);
     await ctx.reply('Failed to clear chat data.');
