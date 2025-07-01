@@ -69,6 +69,10 @@ const handleChatDataCommand = async (ctx: Context) => {
 };
 
 const handleClearChatDataCommand = async (ctx: Context) => {
+  if (ctx.from?.id !== telegramIds.PASSOCA) {
+    await ctx.reply('Sai fora irmão');
+    return;
+  }
   try {
     deleteOldMessages();
   } catch (error) {
@@ -124,8 +128,9 @@ export const addReplies = (bot: Bot) => {
 
     if (ctx.message?.text?.includes('saturday')) await handleAsukaCommand(ctx);
 
+    if (ctx.message?.text?.includes('cleargptmessages')) await handleClearChatDataCommand(ctx);
+
     if (ctx.message?.text?.includes('chatdata')) await handleChatDataCommand(ctx);
 
-    if (ctx.message?.text?.includes('clearchatdata')) await handleClearChatDataCommand(ctx);
   });
 };
