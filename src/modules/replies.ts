@@ -74,7 +74,9 @@ const handleClearChatDataCommand = async (ctx: Context) => {
     return;
   }
   try {
-    deleteOldMessages();
+    await ctx.reply('Cleaning old data...');
+    const message = await deleteOldMessages();
+    ctx.reply(message);
   } catch (error) {
     console.error('Error clearing chat data:', error);
     await ctx.reply('Failed to clear chat data.');
