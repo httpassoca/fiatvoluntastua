@@ -1,22 +1,13 @@
-FROM node:20-alpine AS build
+FROM node:20
 
 WORKDIR /src
-
-COPY package*.json ./
-
-RUN npm ci
 
 COPY . .
 
+RUN npm ci
+
+# Build the application
 RUN npm run build
 
-FROM node:20-alpine
-
-WORKDIR /src
-
-COPY --from=build /src/dist ./dist
-COPY --from=build /src/node_modules ./node_modules
-COPY --from=build /src/package*.json ./
-
-
+# Default command
 CMD ["node", "dist/index.js"]
