@@ -3,7 +3,6 @@ import { addReplies } from '@/modules/replies';
 import { addSchedulers } from '@/modules/schedulers';
 import { Bot } from 'grammy';
 
-// Initialize the bot
 let bot: Bot;
 
 try {
@@ -20,17 +19,14 @@ try {
 addReplies(bot);
 addSchedulers(bot);
 
-// Start the bot with error handling
 bot.start().catch((error) => {
   console.error('Bot startup failed:', error);
 });
 
-// Logging (optional)
 bot.api.getMe().then((botInfo) => {
   console.log(`Bot started as @${botInfo.username}`);
 });
 
-// Optional: Handle graceful shutdown
 process.on('SIGINT', () => {
   console.log('Bot shutting down...');
   bot.stop();

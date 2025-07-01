@@ -5,7 +5,7 @@ import * as path from 'path';
 
 // Configuration (move this to a config file if needed)
 const CHAT_HISTORY_FILE = path.join(__dirname, 'chat_history.json');
-const OPENAI_MODEL = 'gpt-4o-2024-08-06';
+const OPENAI_MODEL = 'gpt-4o-mini';
 const SYSTEM_MESSAGE = 'You are a helpful assistant.';
 const DELETION_THRESHOLD_WEEKS = 2; // Weeks for old message deletion
 
