@@ -26,13 +26,3 @@ bot.start().catch((error) => {
 bot.api.getMe().then((botInfo) => {
   console.log(`Bot started as @${botInfo.username}`);
 });
-
-process.on('SIGINT', () => {
-  console.log('Bot shutting down...');
-  bot.stop();
-});
-
-process.on('SIGTERM', () => {
-  console.log('Bot shutting down...');
-  bot.stop();
-});
