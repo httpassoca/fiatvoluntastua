@@ -1,6 +1,6 @@
 import media from '@/data/mediaData.json';
 import telegramIds from '@/data/telegramIds.json';
-import { gptAnswer } from '@/services/gptAnswer';
+import { deleteOldMessages, gptAnswer } from '@/services/gptAnswer';
 import { Bot, Context } from 'grammy';
 
 // Configuration
@@ -68,6 +68,15 @@ const handleChatDataCommand = async (ctx: Context) => {
   }
 };
 
+const handleClearChatDataCommand = async (ctx: Context) => {
+  try {
+    deleteOldMessages();
+  } catch (error) {
+    console.error('Error clearing chat data:', error);
+    await ctx.reply('Failed to clear chat data.');
+  }
+};
+
 const handleDeusTrigger = async (ctx: Context) => {
   await ctx.replyWithPhoto(DEUS_IMAGE_URL, { reply_to_message_id: ctx.message?.message_id });
 };
@@ -116,5 +125,7 @@ export const addReplies = (bot: Bot) => {
     if (ctx.message?.text?.includes('saturday')) await handleAsukaCommand(ctx);
 
     if (ctx.message?.text?.includes('chatdata')) await handleChatDataCommand(ctx);
+
+    if (ctx.message?.text?.includes('clearchatdata')) await handleClearChatDataCommand(ctx);
   });
 };
