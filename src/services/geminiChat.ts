@@ -69,7 +69,8 @@ export class GeminiChatService implements ChatCompletionService {
 
   async getChatCompletion(messages: ChatCompletionMessageParam[]): Promise<string | null> {
     try {
-      const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
+      // Model availability depends on the API key/project; "gemini-2.0-flash" is a safer default on v1beta.
+      const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
       const { systemInstruction, history, userMessage } = toGeminiChat(messages)
 
       const model = this.genai.getGenerativeModel({
