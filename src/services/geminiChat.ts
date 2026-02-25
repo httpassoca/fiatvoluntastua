@@ -70,7 +70,7 @@ export class GeminiChatService implements ChatCompletionService {
   async getChatCompletion(messages: ChatCompletionMessageParam[]): Promise<string | null> {
     try {
       // Model availability depends on the API key/project; "gemini-2.0-flash" is a safer default on v1beta.
-      const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
+      const modelName = process.env.GEMINI_MODEL || 'gemini-3-flash-preview'
       const { systemInstruction, history, userMessage } = toGeminiChat(messages)
 
       const model = this.genai.getGenerativeModel({
@@ -85,6 +85,7 @@ export class GeminiChatService implements ChatCompletionService {
       const text = res.response.text()
       return text || null
     } catch (error) {
+      // errors are handled upstream; keep a local log line for provider-specific debugging
       console.error('Gemini error:', error)
       return null
     }

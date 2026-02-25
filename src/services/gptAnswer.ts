@@ -1,14 +1,16 @@
 import * as path from 'node:path'
 import type { ChatCompletionMessageParam } from 'openai/resources'
-import { ChatHistoryManager, type Message, type UserChatHistory } from './chatHistory'
+import { ChatHistoryManager, type Message } from './chatHistory'
 import type { ChatCompletionService } from './openaiChat'
 import { OpenAIChatService } from './openaiChat'
 import { GeminiChatService } from './geminiChat'
 import { aiProvider } from '@/config'
+import { createLogger } from '@/services/logger'
+
+const log = createLogger({ name: 'gptAnswer' })
 
 export const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
 export const DEFAULT_SYSTEM_MESSAGE = 'You are a helpful assistant.'
-export const DEFAULT_DELETION_THRESHOLD_WEEKS = 2
 
 function defaultHistoryPath() {
   // dist/services/gptAnswer.js -> dist/services/chat_history.json
@@ -33,7 +35,6 @@ export function createGptService(opts: {
   openai?: ChatCompletionService
   model?: string
   systemMessage?: string
-  deletionThresholdWeeks?: number
 } = {}) {
   const historyFilePath = opts.historyFilePath ?? defaultHistoryPath()
   const chatHistoryManager = new ChatHistoryManager(historyFilePath)
@@ -43,7 +44,6 @@ export function createGptService(opts: {
 
   const model = opts.model ?? DEFAULT_OPENAI_MODEL
   const systemMessage = opts.systemMessage ?? DEFAULT_SYSTEM_MESSAGE
-  const deletionThresholdWeeks = opts.deletionThresholdWeeks ?? DEFAULT_DELETION_THRESHOLD_WEEKS
 
   async function gptAnswer(question: string, userId: string, username?: string): Promise<string> {
     try {
@@ -68,46 +68,13 @@ export function createGptService(opts: {
 
       return processAnswer(answer)
     } catch (error) {
-      console.error('GPT error:', error)
-      return String(error)
+      log.error('gptAnswer failed', { error: String(error), userId })
+      // Keep user-facing errors short; details go to logs.
+      return 'deu ruim com a IA (ver logs)'
     }
   }
 
-  async function deleteOldMessages(): Promise<string> {
-    const chatHistory: UserChatHistory = await chatHistoryManager.load()
-    const deletionThreshold = Date.now() - deletionThresholdWeeks * 7 * 24 * 60 * 60 * 1000
-    const deletedCounts: Record<string, { username?: string; count: number }> = {}
-    const logs: string[] = []
-
-    for (const userId in chatHistory) {
-      const initialMessageCount = chatHistory[userId].length
-      const remainingMessages = chatHistory[userId].filter((msg) => msg.timestamp >= deletionThreshold)
-      const deletedCount = initialMessageCount - remainingMessages.length
-
-      if (deletedCount > 0) {
-        const firstDeletedMessage = chatHistory[userId].find((msg) => msg.timestamp < deletionThreshold)
-        const username = firstDeletedMessage?.username
-        deletedCounts[userId] = { username, count: deletedCount }
-      }
-      chatHistory[userId] = remainingMessages
-    }
-
-    await chatHistoryManager.save(chatHistory)
-
-    if (Object.keys(deletedCounts).length > 0) {
-      logs.push('*Chat history cleanup (older than two weeks):*')
-      for (const userId in deletedCounts) {
-        const userInfo = deletedCounts[userId].username ? `(*${deletedCounts[userId].username}*)` : '(username not available)'
-        logs.push(`  User *${userId}* ${userInfo}: Deleted *${deletedCounts[userId].count}* messages.`)
-      }
-    } else {
-      logs.push('*Chat history cleanup (older than two weeks):* No old messages to delete.')
-    }
-
-    return logs.join('\n')
-  }
-
-  return { gptAnswer, deleteOldMessages }
+  return { gptAnswer }
 }
 
 // Backwards-compatible exports used by the bot (lazy init to avoid env dependency at import time)
@@ -118,5 +85,3 @@ function defaultSvc() {
 }
 
 export const gptAnswer = (...args: Parameters<ReturnType<typeof createGptService>['gptAnswer']>) => defaultSvc().gptAnswer(...args)
-export const deleteOldMessages = (...args: Parameters<ReturnType<typeof createGptService>['deleteOldMessages']>) =>
-  defaultSvc().deleteOldMessages(...args)

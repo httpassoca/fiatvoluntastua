@@ -1,139 +1,131 @@
-import media from '@/data/mediaData.json';
-import telegramIds from '@/data/telegramIds.json';
-import { deleteOldMessages, gptAnswer } from '@/services/gptAnswer';
-import { Bot, Context } from 'grammy';
+import { media } from '../data/mediaData'
+import telegramIds from '../data/telegramIds.json'
+import { gptAnswer } from '@/services/gptAnswer'
+import { createLogger } from '@/services/logger'
+import { Bot, Context } from 'grammy'
+
+const log = createLogger({ name: 'replies' })
 
 // Configuration
-const RETARDED_REPLY_CHANCE = 1; // 1% chance to reply with "vc eh retardado"
-const GPT_COMMAND_PREFIX = 'gpt ';
-const MAX_MESSAGE_LENGTH = 4000;
-const DEUS_IMAGE_URL = 'https://i.imgur.com/nfZV54N.jpg';
-const SMT_REPLY = '😂😂😂😂 smt 😂😂😂😂';
+const RETARDED_REPLY_CHANCE = 1 // 1% chance to reply with "vc eh retardado"
+const GPT_COMMAND_PREFIX = 'gpt '
+const MAX_MESSAGE_LENGTH = 4000
+const DEUS_IMAGE_URL = 'https://i.imgur.com/nfZV54N.jpg'
+const SMT_REPLY = '😂😂😂😂 smt 😂😂😂😂'
 
 // State Management
-let firstMessageFromGnomos = true;
+let firstMessageFromGnomos = true
 
 // Helper Functions
 const sendSplitMessage = async (ctx: Context, message: string) => {
   if (ctx.chat && ctx.message) { // Check if ctx.chat and ctx.message exist
-    const halfLength = Math.floor(message.length / 2);
-    const firstHalf = message.slice(0, halfLength);
-    const secondHalf = message.slice(halfLength);
+    const halfLength = Math.floor(message.length / 2)
+    const firstHalf = message.slice(0, halfLength)
+    const secondHalf = message.slice(halfLength)
 
     await ctx.api.sendMessage(ctx.chat.id, firstHalf, {
       reply_to_message_id: ctx.message.message_id,
       parse_mode: 'Markdown',
-    });
+    })
     await ctx.api.sendMessage(ctx.chat.id, secondHalf, {
       reply_to_message_id: ctx.message.message_id,
       parse_mode: 'Markdown',
-    });
+    })
   } else {
-    console.error("ctx.chat or ctx.message is undefined in sendSplitMessage");
-    await ctx.reply("Error: Could not send split message.");
+    log.warn("sendSplitMessage: ctx.chat or ctx.message is undefined")
+    await ctx.reply("Error: Could not send split message.")
   }
-};
+}
 
 const handleGptCommand = async (ctx: Context) => {
   if (ctx.chat && ctx.message) {
-    const question = ctx.message.text?.replace(GPT_COMMAND_PREFIX, '') || '';
-    const answer = await gptAnswer(question, ctx.from?.id?.toString() || '', ctx.from?.username);
+    const question = ctx.message.text?.replace(GPT_COMMAND_PREFIX, '') || ''
+    const answer = await gptAnswer(question, ctx.from?.id?.toString() || '', ctx.from?.username)
 
     if (answer.length > MAX_MESSAGE_LENGTH) {
-      await sendSplitMessage(ctx, answer);
+      await sendSplitMessage(ctx, answer)
     } else {
       await ctx.api.sendMessage(ctx.chat.id, answer, {
         reply_to_message_id: ctx.message.message_id,
         parse_mode: 'Markdown',
-      });
+      })
     }
   } else {
-    console.error("ctx.chat or ctx.message is undefined in handleGptCommand");
-    await ctx.reply("Error: Could not process GPT command.");
+    log.warn("handleGptCommand: ctx.chat or ctx.message is undefined")
+    await ctx.reply("Error: Could not process GPT command.")
   }
-};
+}
 
 const handleChatDataCommand = async (ctx: Context) => {
   if (ctx.chat && ctx.message) {
     try {
-      const chatData = await ctx.api.getChat(ctx.chat.id);
-      await ctx.reply(JSON.stringify(chatData), { reply_to_message_id: ctx.message.message_id });
+      const chatData = await ctx.api.getChat(ctx.chat.id)
+      await ctx.reply(JSON.stringify(chatData), { reply_to_message_id: ctx.message.message_id })
     } catch (error) {
-      console.error('Error fetching chat data:', error);
-      await ctx.reply('Failed to fetch chat data.');
+      log.error('Error fetching chat data', { error: String(error) })
+      await ctx.reply('Failed to fetch chat data.')
     }
   } else {
-    console.error("ctx.chat or ctx.message is undefined in handleChatDataCommand");
-    await ctx.reply("Error: Could not fetch chat data.");
+    log.warn("handleChatDataCommand: ctx.chat or ctx.message is undefined")
+    await ctx.reply("Error: Could not fetch chat data.")
   }
-};
+}
 
 const handleClearChatDataCommand = async (ctx: Context) => {
-  await ctx.reply('I got you');
-  if (ctx.from?.id !== telegramIds.PASSOCA) {
-    await ctx.reply('Sai fora irmão');
-    return;
-  }
-  try {
-    await ctx.reply('Cleaning old data...');
-    const message = await deleteOldMessages();
-    ctx.reply(message, { parse_mode: 'Markdown' });
-  } catch (error) {
-    console.error('Error clearing chat data:', error);
-    await ctx.reply('Failed to clear chat data.');
-  }
-};
+  // This feature was removed (no auto/prune history anymore).
+  await ctx.reply('This command is disabled now. (History is no longer auto-pruned.)', { reply_to_message_id: ctx.message?.message_id })
+}
 
 const handleDeusTrigger = async (ctx: Context) => {
-  await ctx.replyWithPhoto(DEUS_IMAGE_URL, { reply_to_message_id: ctx.message?.message_id });
-};
+  await ctx.replyWithPhoto(DEUS_IMAGE_URL, { reply_to_message_id: ctx.message?.message_id })
+}
 
 const handleSmtTrigger = async (ctx: Context) => {
-  await ctx.reply(SMT_REPLY, { reply_to_message_id: ctx.message?.message_id });
-};
+  await ctx.reply(SMT_REPLY, { reply_to_message_id: ctx.message?.message_id })
+}
 
 const handleMyIdCommand = async (ctx: Context) => {
-  await ctx.reply(ctx.from?.id?.toString() || '', { reply_to_message_id: ctx.message?.message_id });
-};
+  await ctx.reply(ctx.from?.id?.toString() || '', { reply_to_message_id: ctx.message?.message_id })
+}
 
 const handleAsukaCommand = async (ctx: Context) => {
-  await ctx.api.sendPhoto(telegramIds.COETUS, media.asukaLink);
-};
+  await ctx.api.sendPhoto(telegramIds.COETUS, media.asukaLink)
+}
 
 const handleRandomRetardedReply = async (ctx: Context) => {
   if (Math.floor(Math.random() * 100) < RETARDED_REPLY_CHANCE) {
-    await ctx.reply('vc eh retardado <3', { reply_to_message_id: ctx.message?.message_id });
+    await ctx.reply('vc eh retardado <3', { reply_to_message_id: ctx.message?.message_id })
   }
-};
+}
 
 const handleFirstMessageFromGnomos = async (ctx: Context) => {
   if (ctx.from?.username === 'temgnomosnaminhacasa079' && firstMessageFromGnomos) {
-    firstMessageFromGnomos = false;
-    await ctx.reply('smt', { reply_to_message_id: ctx.message?.message_id });
+    firstMessageFromGnomos = false
+    await ctx.reply('smt', { reply_to_message_id: ctx.message?.message_id })
   }
-};
+}
 
 // Main Function
 export const addReplies = (bot: Bot) => {
   bot.on('message:text', async (ctx) => {
-    await handleRandomRetardedReply(ctx);
-    await handleFirstMessageFromGnomos(ctx);
+    await handleRandomRetardedReply(ctx)
+    await handleFirstMessageFromGnomos(ctx)
 
-    if (ctx.message?.text?.includes(GPT_COMMAND_PREFIX)) await handleGptCommand(ctx);
+    if (ctx.message?.text?.includes(GPT_COMMAND_PREFIX)) await handleGptCommand(ctx)
 
-    if (/\bdeus\b/.test(ctx.message?.text || '')) await handleDeusTrigger(ctx);
+    if (/\bdeus\b/.test(ctx.message?.text || '')) await handleDeusTrigger(ctx)
 
-    if (/\bsmt\b/.test(ctx.message?.text || '')) await handleSmtTrigger(ctx);
+    if (/\bsmt\b/.test(ctx.message?.text || '')) await handleSmtTrigger(ctx)
 
-    if (ctx.message?.text?.includes('myid')) await handleMyIdCommand(ctx);
+    if (ctx.message?.text?.includes('myid')) await handleMyIdCommand(ctx)
 
-    if (ctx.message?.text?.includes('asuka')) await handleAsukaCommand(ctx);
+    if (ctx.message?.text?.includes('asuka')) await handleAsukaCommand(ctx)
 
-    if (ctx.message?.text?.includes('saturday')) await handleAsukaCommand(ctx);
+    if (ctx.message?.text?.includes('saturday')) await handleAsukaCommand(ctx)
 
-    if (ctx.message?.text?.includes('cleargptmessages')) await handleClearChatDataCommand(ctx);
+    if (ctx.message?.text?.includes('cleargptmessages')) await handleClearChatDataCommand(ctx)
 
-    if (ctx.message?.text?.includes('chatdata')) await handleChatDataCommand(ctx);
+    if (ctx.message?.text?.includes('chatdata')) await handleChatDataCommand(ctx)
 
-  });
-};
+  })
+}

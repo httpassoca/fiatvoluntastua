@@ -43,29 +43,4 @@ describe('gptAnswer service', () => {
 
     expect(mock.lastMessages?.[0]).toEqual({ role: 'system', content: 'sys' })
   })
-
-  it('deleteOldMessages prunes old entries', async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'fvt-'))
-    const history = path.join(dir, 'chat_history.json')
-
-    const now = Date.now()
-    const old = now - 999 * 24 * 60 * 60 * 1000
-    const data = {
-      u1: [
-        { role: 'user', content: 'old', timestamp: old, username: 'x' },
-        { role: 'assistant', content: 'old2', timestamp: old },
-        { role: 'user', content: 'new', timestamp: now },
-      ],
-    }
-    await fs.writeFile(history, JSON.stringify(data), 'utf-8')
-
-    const mock = new MockOpenAI('ok')
-    const svc = createGptService({ historyFilePath: history, openai: mock, deletionThresholdWeeks: 2 })
-    const msg = await svc.deleteOldMessages()
-    expect(msg).toMatch(/Deleted \*2\* messages/)
-
-    const raw = JSON.parse(await fs.readFile(history, 'utf-8'))
-    expect(raw.u1).toHaveLength(1)
-    expect(raw.u1[0].content).toBe('new')
-  })
 })

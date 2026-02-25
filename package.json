@@ -6,8 +6,8 @@
   "author": "Rafael Freitas",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -22,6 +22,7 @@
     "openai": "^4.20.1"
   },
   "devDependencies": {
+    "@esbuild-plugins/tsconfig-paths": "^0.1.2",
     "@types/node": "^22.19.11",
     "@types/node-cron": "^3.0.11",
     "@vitest/coverage-v8": "^4.0.18",

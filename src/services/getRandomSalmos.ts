@@ -1,4 +1,4 @@
-import json from '@/data/salmos.json'
+import json from '../data/salmos.json'
 import { pickRandom, type Rng } from '@/lib/random'
 
 export type Chapter = {
