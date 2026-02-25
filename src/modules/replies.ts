@@ -17,50 +17,94 @@ const SMT_REPLY = '😂😂😂😂 smt 😂😂😂😂'
 let firstMessageFromGnomos = true
 
 // Helper Functions
-function splitText(text: string, maxLen: number) {
-  const out: string[] = []
-  let s = String(text || '')
-  while (s.length > maxLen) {
-    let cut = maxLen
-    // Prefer splitting on a newline/space to keep chunks readable.
-    const nl = s.lastIndexOf('\n', maxLen)
-    const sp = s.lastIndexOf(' ', maxLen)
-    cut = Math.max(nl, sp, 1)
-    out.push(s.slice(0, cut).trim())
-    s = s.slice(cut).trim()
+function splitMarkdown(text: string, maxLen: number) {
+  // Best-effort splitter that tries not to break fenced code blocks.
+  // If we split while inside ``` block, we close + reopen fences between chunks.
+  const lines = String(text || '').split('\n')
+  const chunks: string[] = []
+
+  let buf: string[] = []
+  let bufLen = 0
+  let inFence = false
+
+  function flush(forceCloseFence = false) {
+    if (!buf.length) return
+    let chunk = buf.join('\n').trim()
+    if (forceCloseFence && inFence) chunk += '\n```'
+    if (chunk) chunks.push(chunk)
+    buf = []
+    bufLen = 0
   }
-  if (s) out.push(s)
-  return out
+
+  for (const line of lines) {
+    const isFence = line.trim().startsWith('```')
+    const add = (buf.length ? 1 : 0) + line.length // +1 for newline
+
+    // If adding this line would exceed, flush first.
+    if (bufLen + add > maxLen) {
+      flush(true)
+      // reopen fence if we were inside one
+      if (inFence) {
+        buf.push('```')
+        bufLen = 3
+      }
+    }
+
+    buf.push(line)
+    bufLen += add
+
+    if (isFence) inFence = !inFence
+  }
+
+  flush(true)
+
+  // Hard fallback: if any chunk is still too large (single huge line), split by length.
+  const hard: string[] = []
+  for (const c of chunks) {
+    if (c.length <= maxLen) {
+      hard.push(c)
+      continue
+    }
+    let s = c
+    while (s.length > maxLen) {
+      hard.push(s.slice(0, maxLen))
+      s = s.slice(maxLen)
+    }
+    if (s) hard.push(s)
+  }
+  return hard
 }
 
-async function safeSendMessage(ctx: Context, text: string) {
+async function safeSendMessageMarkdown(ctx: Context, text: string) {
   if (!ctx.chat || !ctx.message) {
-    log.warn('safeSendMessage: ctx.chat or ctx.message is undefined')
+    log.warn('safeSendMessageMarkdown: ctx.chat or ctx.message is undefined')
     return
   }
 
-  // IMPORTANT: do NOT set parse_mode here.
-  // Markdown/HTML can break when the model outputs unmatched entities or we split mid-entity.
   try {
     await ctx.api.sendMessage(ctx.chat.id, text, {
       reply_to_message_id: ctx.message.message_id,
-      // parse_mode intentionally omitted
+      parse_mode: 'Markdown',
     })
   } catch (error: any) {
-    // Don't crash the update handler.
-    log.error('sendMessage failed', { error: String(error?.message || error) })
+    // Fallback to plain text if Telegram rejects entities.
+    const msg = String(error?.message || error)
+    log.warn('sendMessage (Markdown) failed; retrying without parse_mode', { error: msg })
     try {
-      await ctx.reply('Failed to send message.', { reply_to_message_id: ctx.message.message_id })
-    } catch {
-      // ignore
+      await ctx.api.sendMessage(ctx.chat.id, text, {
+        reply_to_message_id: ctx.message.message_id,
+        // parse_mode omitted
+      })
+    } catch (error2: any) {
+      log.error('sendMessage fallback failed', { error: String(error2?.message || error2) })
     }
   }
 }
 
 const sendSplitMessage = async (ctx: Context, message: string) => {
-  const chunks = splitText(message, MAX_MESSAGE_LENGTH)
+  const chunks = splitMarkdown(message, MAX_MESSAGE_LENGTH)
   for (const chunk of chunks) {
-    await safeSendMessage(ctx, chunk)
+    await safeSendMessageMarkdown(ctx, chunk)
   }
 }
 
@@ -72,7 +116,7 @@ const handleGptCommand = async (ctx: Context) => {
     if (answer.length > MAX_MESSAGE_LENGTH) {
       await sendSplitMessage(ctx, answer)
     } else {
-      await safeSendMessage(ctx, answer)
+      await safeSendMessageMarkdown(ctx, answer)
     }
   } else {
     log.warn("handleGptCommand: ctx.chat or ctx.message is undefined")
