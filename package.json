@@ -17,6 +17,7 @@
     "docker:stop": "docker stop 'fiatvoluntastua' && docker rm 'fiatvoluntastua'"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "grammy": "^1.16.1",
     "openai": "^4.20.1"
   },

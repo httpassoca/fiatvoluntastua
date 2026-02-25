@@ -3,6 +3,8 @@ import type { ChatCompletionMessageParam } from 'openai/resources'
 import { ChatHistoryManager, type Message, type UserChatHistory } from './chatHistory'
 import type { ChatCompletionService } from './openaiChat'
 import { OpenAIChatService } from './openaiChat'
+import { GeminiChatService } from './geminiChat'
+import { aiProvider } from '@/config'
 
 export const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
 export const DEFAULT_SYSTEM_MESSAGE = 'You are a helpful assistant.'
@@ -35,7 +37,9 @@ export function createGptService(opts: {
 } = {}) {
   const historyFilePath = opts.historyFilePath ?? defaultHistoryPath()
   const chatHistoryManager = new ChatHistoryManager(historyFilePath)
-  const openai = opts.openai ?? new OpenAIChatService()
+
+  const provider = (opts.openai ??
+    (aiProvider === 'gemini' ? new GeminiChatService() : new OpenAIChatService())) as ChatCompletionService
 
   const model = opts.model ?? DEFAULT_OPENAI_MODEL
   const systemMessage = opts.systemMessage ?? DEFAULT_SYSTEM_MESSAGE
@@ -55,7 +59,7 @@ export function createGptService(opts: {
         ...chatHistory[userId].map((msg) => ({ role: msg.role, content: msg.content })),
       ]
 
-      const answer = await openai.getChatCompletion(messages)
+      const answer = await provider.getChatCompletion(messages)
       if (!answer) return 'gpt foi de base kkkkkk'
 
       const assistantMessage: Message = { role: 'assistant', content: answer, timestamp: Date.now() }
