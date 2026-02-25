@@ -9,7 +9,7 @@ const log = createLogger({ name: 'replies' })
 // Configuration
 const RETARDED_REPLY_CHANCE = 1 // 1% chance to reply with "vc eh retardado"
 const GPT_COMMAND_PREFIX = 'gpt '
-const MAX_MESSAGE_LENGTH = 4000
+const MAX_MESSAGE_LENGTH = 3500
 const DEUS_IMAGE_URL = 'https://i.imgur.com/nfZV54N.jpg'
 const SMT_REPLY = '😂😂😂😂 smt 😂😂😂😂'
 
@@ -17,23 +17,50 @@ const SMT_REPLY = '😂😂😂😂 smt 😂😂😂😂'
 let firstMessageFromGnomos = true
 
 // Helper Functions
-const sendSplitMessage = async (ctx: Context, message: string) => {
-  if (ctx.chat && ctx.message) { // Check if ctx.chat and ctx.message exist
-    const halfLength = Math.floor(message.length / 2)
-    const firstHalf = message.slice(0, halfLength)
-    const secondHalf = message.slice(halfLength)
+function splitText(text: string, maxLen: number) {
+  const out: string[] = []
+  let s = String(text || '')
+  while (s.length > maxLen) {
+    let cut = maxLen
+    // Prefer splitting on a newline/space to keep chunks readable.
+    const nl = s.lastIndexOf('\n', maxLen)
+    const sp = s.lastIndexOf(' ', maxLen)
+    cut = Math.max(nl, sp, 1)
+    out.push(s.slice(0, cut).trim())
+    s = s.slice(cut).trim()
+  }
+  if (s) out.push(s)
+  return out
+}
 
-    await ctx.api.sendMessage(ctx.chat.id, firstHalf, {
+async function safeSendMessage(ctx: Context, text: string) {
+  if (!ctx.chat || !ctx.message) {
+    log.warn('safeSendMessage: ctx.chat or ctx.message is undefined')
+    return
+  }
+
+  // IMPORTANT: do NOT set parse_mode here.
+  // Markdown/HTML can break when the model outputs unmatched entities or we split mid-entity.
+  try {
+    await ctx.api.sendMessage(ctx.chat.id, text, {
       reply_to_message_id: ctx.message.message_id,
-      parse_mode: 'Markdown',
+      // parse_mode intentionally omitted
     })
-    await ctx.api.sendMessage(ctx.chat.id, secondHalf, {
-      reply_to_message_id: ctx.message.message_id,
-      parse_mode: 'Markdown',
-    })
-  } else {
-    log.warn("sendSplitMessage: ctx.chat or ctx.message is undefined")
-    await ctx.reply("Error: Could not send split message.")
+  } catch (error: any) {
+    // Don't crash the update handler.
+    log.error('sendMessage failed', { error: String(error?.message || error) })
+    try {
+      await ctx.reply('Failed to send message.', { reply_to_message_id: ctx.message.message_id })
+    } catch {
+      // ignore
+    }
+  }
+}
+
+const sendSplitMessage = async (ctx: Context, message: string) => {
+  const chunks = splitText(message, MAX_MESSAGE_LENGTH)
+  for (const chunk of chunks) {
+    await safeSendMessage(ctx, chunk)
   }
 }
 
@@ -45,10 +72,7 @@ const handleGptCommand = async (ctx: Context) => {
     if (answer.length > MAX_MESSAGE_LENGTH) {
       await sendSplitMessage(ctx, answer)
     } else {
-      await ctx.api.sendMessage(ctx.chat.id, answer, {
-        reply_to_message_id: ctx.message.message_id,
-        parse_mode: 'Markdown',
-      })
+      await safeSendMessage(ctx, answer)
     }
   } else {
     log.warn("handleGptCommand: ctx.chat or ctx.message is undefined")

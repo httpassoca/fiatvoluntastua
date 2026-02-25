@@ -66,7 +66,14 @@ export function createGptService(opts: {
       chatHistory[userId].push(assistantMessage)
       await chatHistoryManager.save(chatHistory)
 
-      return processAnswer(answer)
+      const out = processAnswer(answer)
+
+      // Keep Gemini answers short to avoid Telegram entity/parsing issues and wall-of-text.
+      if (aiProvider === 'gemini' && out.length > 2000) {
+        return out.slice(0, 2000).trimEnd() + '…'
+      }
+
+      return out
     } catch (error) {
       log.error('gptAnswer failed', { error: String(error), userId })
       // Keep user-facing errors short; details go to logs.
