@@ -8,7 +8,10 @@
   "scripts": {
     "build": "tsup src/index.ts",
     "dev": "tsup src/index.ts --watch",
-
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
     "docker:build": "docker build --no-cache --tag 'fiatvoluntastua' .",
     "docker:start": "docker run --name 'fiatvoluntastua' -v chat-data:/src/dist -d 'fiatvoluntastua'",
     "docker:stop": "docker stop 'fiatvoluntastua' && docker rm 'fiatvoluntastua'"
@@ -18,10 +21,14 @@
     "openai": "^4.20.1"
   },
   "devDependencies": {
-    "@types/node": "^20.2.3",
+    "@types/node": "^22.19.11",
+    "@types/node-cron": "^3.0.11",
+    "@vitest/coverage-v8": "^4.0.18",
     "dotenv": "^16.0.3",
     "node-cron": "^3.0.2",
     "tsup": "^6.7.0",
-    "typescript": "^4.7.4"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

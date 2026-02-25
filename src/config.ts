@@ -1,5 +1,6 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
+import * as dotenv from 'dotenv'
 
-export const telegramBotToken = `${process.env.TELEGRAM_BOT_TOKEN}`;
-export const openaiApiKey = process.env.OPENAI_API_KEY;
+dotenv.config()
+
+export const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN || ''
+export const openaiApiKey = process.env.OPENAI_API_KEY || ''

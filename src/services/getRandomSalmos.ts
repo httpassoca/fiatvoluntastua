@@ -1,32 +1,18 @@
-import json from '@/data/salmos.json';
+import json from '@/data/salmos.json'
+import { pickRandom, type Rng } from '@/lib/random'
 
-type Chapter = {
-  chapter: number;
-  text: string[];
-};
-const salmos: Chapter[] = json;
-
-function getRandomItemFromArray(jsonArray: any[]) {
-  // Check if the input array is empty or not an array
-  if (!Array.isArray(jsonArray) || jsonArray.length === 0) {
-    return null;
-  }
-
-  // Generate a random index within the array length
-  const randomIndex = Math.floor(Math.random() * jsonArray.length);
-
-  // Return the random item from the array
-  return jsonArray[randomIndex];
+export type Chapter = {
+  chapter: number
+  text: string[]
 }
 
-export const getRandomSalmo = () => {
-  // Get a random item from the JSON array
-  const salmoRandom: Chapter = getRandomItemFromArray(salmos) || salmos[50];
+const salmos: Chapter[] = json
 
-  const salmo = `
-    SALMO ${salmoRandom.chapter}
+export function formatSalmo(ch: Chapter) {
+  return `SALMO ${ch.chapter}\n\n${ch.text.join('\n')}`
+}
 
-${salmoRandom.text.join('\n')}
-  `
-  return salmo
+export function getRandomSalmo(rng: Rng = Math.random) {
+  const salmoRandom: Chapter = pickRandom(salmos, rng) || salmos[50]!
+  return formatSalmo(salmoRandom)
 }

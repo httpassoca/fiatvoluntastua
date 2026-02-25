@@ -1,9 +1,9 @@
-import media from '@/data/mediaData.json';
-import telegramIds from "@/data/telegramIds.json";
-import { Bot } from "grammy";
-import { getRandomSalmo } from "../services/getRandomSalmos";
-import { deleteOldMessages } from "../services/gptAnswer";
-var cron = require("node-cron");
+import media from '@/data/mediaData.json'
+import telegramIds from '@/data/telegramIds.json'
+import { Bot } from 'grammy'
+import cron from 'node-cron'
+import { getRandomSalmo } from '@/services/getRandomSalmos'
+import { deleteOldMessages } from '@/services/gptAnswer'
 
 export const addSchedulers = (bot: Bot) => {
   // Monday 2pm
