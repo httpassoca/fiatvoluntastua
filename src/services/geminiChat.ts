@@ -3,21 +3,57 @@ import type { ChatCompletionMessageParam } from 'openai/resources'
 import type { ChatCompletionService } from './openaiChat'
 import { geminiApiKey } from '@/config'
 
-function toGeminiPrompt(messages: ChatCompletionMessageParam[]) {
-  // Gemini's SDK has its own chat format; simplest is to flatten to text.
-  // Keep it close to the original roles so behavior is similar.
-  return messages
-    .map((m) => {
-      const role = m.role
-      const content = typeof m.content === 'string' ? m.content : ''
-      if (!content) return ''
-      if (role === 'system') return `SYSTEM: ${content}`
-      if (role === 'user') return `USER: ${content}`
-      if (role === 'assistant') return `ASSISTANT: ${content}`
-      return content
-    })
+export type GeminiHistoryItem = {
+  role: 'user' | 'model'
+  parts: Array<{ text: string }>
+}
+
+/**
+ * Convert OpenAI-style message list into Gemini chat format.
+ *
+ * - system messages become `systemInstruction`
+ * - all user/assistant messages before the last user message become `history`
+ * - the last user message becomes the `userMessage` input
+ */
+export function toGeminiChat(messages: ChatCompletionMessageParam[]): {
+  systemInstruction: string
+  history: GeminiHistoryItem[]
+  userMessage: string
+} {
+  const systemInstruction = messages
+    .filter((m) => m.role === 'system')
+    .map((m) => (typeof m.content === 'string' ? m.content : ''))
     .filter(Boolean)
     .join('\n')
+
+  // Find last user message index
+  let lastUserIndex: number | null = null
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i]?.role === 'user') {
+      lastUserIndex = i
+      break
+    }
+  }
+
+  const userMessage =
+    lastUserIndex == null
+      ? ''
+      : typeof messages[lastUserIndex]?.content === 'string'
+        ? (messages[lastUserIndex]!.content as string)
+        : ''
+
+  const before = lastUserIndex == null ? messages : messages.slice(0, lastUserIndex)
+  const history: GeminiHistoryItem[] = before
+    .filter((m) => m.role === 'user' || m.role === 'assistant')
+    .map((m) => {
+      const text = typeof m.content === 'string' ? m.content : ''
+      return {
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text }],
+      }
+    })
+
+  return { systemInstruction, history, userMessage }
 }
 
 export class GeminiChatService implements ChatCompletionService {
@@ -34,10 +70,17 @@ export class GeminiChatService implements ChatCompletionService {
   async getChatCompletion(messages: ChatCompletionMessageParam[]): Promise<string | null> {
     try {
       const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
-      const model = this.genai.getGenerativeModel({ model: modelName })
+      const { systemInstruction, history, userMessage } = toGeminiChat(messages)
 
-      const prompt = toGeminiPrompt(messages)
-      const res = await model.generateContent(prompt)
+      const model = this.genai.getGenerativeModel({
+        model: modelName,
+        // Per docs: systemInstruction is separate from contents/history
+        systemInstruction: systemInstruction || undefined,
+      })
+
+      const chat = model.startChat({ history })
+      const res = await chat.sendMessage(userMessage || '...')
+
       const text = res.response.text()
       return text || null
     } catch (error) {

@@ -1,25 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import type { ChatCompletionMessageParam } from 'openai/resources'
-import { createGptService } from './gptAnswer'
+import { toGeminiChat } from './geminiChat'
 
-class MockGemini {
-  async getChatCompletion(messages: ChatCompletionMessageParam[]) {
-    // prove we got system + user
-    const hasSystem = messages.some((m) => m.role === 'system')
-    const hasUser = messages.some((m) => m.role === 'user')
-    return hasSystem && hasUser ? 'ok-gemini' : 'bad'
-  }
-}
+describe('toGeminiChat', () => {
+  it('splits systemInstruction, history, and userMessage', () => {
+    const { systemInstruction, history, userMessage } = toGeminiChat([
+      { role: 'system', content: 'sys' },
+      { role: 'user', content: 'hi' },
+      { role: 'assistant', content: 'yo' },
+      { role: 'user', content: 'question' },
+    ])
 
-describe('Gemini-compatible provider contract', () => {
-  it('can be used via createGptService(openai: provider)', async () => {
-    const svc = createGptService({
-      historyFilePath: `/tmp/fvt-gemini-test-${Date.now()}.json`,
-      openai: new MockGemini() as any,
-      systemMessage: 'sys',
-    })
-
-    const out = await svc.gptAnswer('q', 'u1')
-    expect(out).toBe('ok-gemini')
+    expect(systemInstruction).toBe('sys')
+    expect(userMessage).toBe('question')
+    expect(history).toEqual([
+      { role: 'user', parts: [{ text: 'hi' }] },
+      { role: 'model', parts: [{ text: 'yo' }] },
+    ])
   })
 })
